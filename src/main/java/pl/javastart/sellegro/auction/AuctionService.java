@@ -27,8 +27,7 @@ public class AuctionService {
         try {
             loadData();
         } catch (IOException e) {
-            System.out.println("Error loading data: " + e.getMessage());
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 
@@ -61,25 +60,39 @@ public class AuctionService {
     }
 
     public List<Auction> findAllForFilters(AuctionFilters auctionFilters) {
-        return auctions.stream()
-                .filter(auction -> auctionFilters.getTitle() == null || auction.getTitle().toUpperCase().contains(auctionFilters.getTitle().toUpperCase()))
-                .collect(Collectors.toList());
-    }
+        if (auctionFilters.getColor() != null) {
+            return auctions.stream()
+                    .filter(auction -> auctionFilters.getColor() == null || auction.getColor().toUpperCase().contains(auctionFilters.getColor().toUpperCase()))
+                    .collect(Collectors.toList());
+        } else if(auctionFilters.getTitle()!=null) {
+            return auctions.stream()
+                    .filter(auction -> auctionFilters.getTitle() == null || auction.getTitle().toUpperCase().contains(auctionFilters.getTitle().toUpperCase()))
+                    .collect(Collectors.toList());
+        }else if(auctionFilters.getCarModel()!=null) {
+            return auctions.stream()
+                    .filter(auction -> auctionFilters.getCarModel() == null || auction.getCarModel().toUpperCase().contains(auctionFilters.getCarModel().toUpperCase()))
+                    .collect(Collectors.toList());
+        }else{
+            return auctions.stream()
+                    .filter(auction -> auctionFilters.getCarMaker() == null || auction.getCarMake().toUpperCase().contains(auctionFilters.getCarMaker().toUpperCase()))
+                    .collect(Collectors.toList());
 
-    public List<Auction> findAllSorted(String sort) {
-        Comparator<Auction> comparator = Comparator.comparing(Auction::getTitle);
-        if(sort.equals("title")) {
-            comparator = Comparator.comparing(Auction::getTitle);
-        } else if(sort.equals("price")) {
-            comparator = Comparator.comparing(Auction::getPrice);
-        }else if(sort.equals("color")) {
-            comparator = Comparator.comparing(Auction::getColor);
-        }else if(sort.equals("endDate")){
-            comparator = Comparator.comparing(Auction::getEndDate);
         }
-
-        return auctions.stream()
-                .sorted(comparator)
-                .collect(Collectors.toList());
     }
-}
+        public List<Auction> findAllSorted (String sort){
+            Comparator<Auction> comparator = Comparator.comparing(Auction::getTitle);
+            if (sort.equals("title")) {
+                comparator = Comparator.comparing(Auction::getTitle);
+            } else if (sort.equals("price")) {
+                comparator = Comparator.comparing(Auction::getPrice);
+            } else if (sort.equals("color")) {
+                comparator = Comparator.comparing(Auction::getColor);
+            } else if (sort.equals("endDate")) {
+                comparator = Comparator.comparing(Auction::getEndDate);
+            }
+
+            return auctions.stream()
+                    .sorted(comparator)
+                    .collect(Collectors.toList());
+        }
+    }
